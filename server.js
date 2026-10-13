@@ -107,7 +107,7 @@ function handlePublic(req, res) {
 }
 
 function controlPanel(token) {
-  const q = `token=${token}`;
+  const q = `token=${encodeURIComponent(token)}`;
   const btns = Object.entries(MODES).map(([m, d]) =>
     `<form method="post" action="/__control/mode/${m}?${q}" style="display:inline"><button title="${d}" class="${m === state.mode ? 'cur' : ''}">${m}</button></form>`).join('');
   const rows = (arr, cols) => arr.map(r => `<tr>${cols.map(c => `<td>${String(r[c]).replace(/</g, '&lt;')}</td>`).join('')}</tr>`).join('');
@@ -145,7 +145,7 @@ async function handleControl(req, res, url) {
     res.writeHead(403, { 'Content-Type': 'text/plain' });
     return res.end('forbidden: missing or wrong ?token=');
   }
-  const back = () => { res.writeHead(303, { Location: `/__control?token=${CONTROL_TOKEN}` }); res.end(); };
+  const back = () => { res.writeHead(303, { Location: `/__control?token=${encodeURIComponent(CONTROL_TOKEN)}` }); res.end(); };
   const p = url.pathname;
 
   if (req.method === 'GET' && p === '/__control') {
@@ -190,5 +190,5 @@ http.createServer((req, res) => {
   handlePublic(req, res);
 }).listen(PORT, () => {
   console.log(`uptime-test-app listening on http://localhost:${PORT}`);
-  console.log(`control panel: http://localhost:${PORT}/__control?token=${CONTROL_TOKEN}`);
+  console.log(`control panel: http://localhost:${PORT}/__control?token=${encodeURIComponent(CONTROL_TOKEN)}`);
 });
