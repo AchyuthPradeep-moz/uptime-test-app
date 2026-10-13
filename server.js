@@ -72,13 +72,19 @@ table{border-collapse:collapse;width:100%;font-size:13px}td,th{border-bottom:1px
 button{margin:3px;padding:6px 12px;cursor:pointer}.cur{background:#222;color:#fff}code{background:#f3f3f3;padding:1px 4px}</style>
 </head><body>${body}</body></html>`;
 
+// UptimeAgent status pill — shown on every public page that renders HTML.
+const STATUS_PILL = `<script src="https://uptime-test-app-onrender-com.uptimeagent.com/embed/v1/badge.js"
+        data-site="uptime-test-app-onrender-com"
+        data-theme="auto" async></script>
+<div data-uptimeagent-pill></div>`;
+
 function handlePublic(req, res) {
   const mode = state.mode;
   logHit(req, mode);
   switch (mode) {
     case 'up':
       res.writeHead(200, { 'Content-Type': 'text/html' });
-      return res.end(page('Uptime Test Site', `<h1>Uptime Test Site</h1><p>SITE_IS_UP</p><p>Served at ${new Date().toISOString()}</p>`));
+      return res.end(page('Uptime Test Site', `<h1>Uptime Test Site</h1>${STATUS_PILL}<p>SITE_IS_UP</p><p>Served at ${new Date().toISOString()}</p>`));
     case 'down':
       res.writeHead(503, { 'Content-Type': 'text/plain', 'Retry-After': '30' });
       return res.end('503 Service Unavailable (simulated)');
@@ -91,7 +97,7 @@ function handlePublic(req, res) {
     case 'slow':
       return setTimeout(() => {
         res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(page('Uptime Test Site', `<h1>Uptime Test Site</h1><p>SITE_IS_UP (slow, ${state.slowSeconds}s)</p>`));
+        res.end(page('Uptime Test Site', `<h1>Uptime Test Site</h1>${STATUS_PILL}<p>SITE_IS_UP (slow, ${state.slowSeconds}s)</p>`));
       }, state.slowSeconds * 1000);
     case 'timeout':
       return; // never respond; Node's default request timeout eventually closes it
@@ -99,7 +105,7 @@ function handlePublic(req, res) {
       return req.socket.destroy();
     case 'keyword':
       res.writeHead(200, { 'Content-Type': 'text/html' });
-      return res.end(page('Uptime Test Site', '<h1>Uptime Test Site</h1><p>Something changed on this page.</p>'));
+      return res.end(page('Uptime Test Site', `<h1>Uptime Test Site</h1>${STATUS_PILL}<p>Something changed on this page.</p>`));
     case 'redirect':
       res.writeHead(302, { Location: req.url });
       return res.end();
