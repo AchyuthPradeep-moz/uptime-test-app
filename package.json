@@ -1,0 +1,13 @@
+{
+  "name": "uptime-test-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Switchable up/down target for testing uptime agents",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

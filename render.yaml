@@ -1,0 +1,13 @@
+# Render Blueprint — free web service.
+# No healthCheckPath on purpose: Render would restart the instance whenever
+# the app is switched to a "down" mode, which defeats the point of the app.
+services:
+  - type: web
+    name: uptime-test-app
+    runtime: node
+    plan: free
+    buildCommand: "true"
+    startCommand: node server.js
+    envVars:
+      - key: CONTROL_TOKEN
+        generateValue: true
